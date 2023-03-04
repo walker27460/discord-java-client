@@ -1,0 +1,11 @@
+型はあるけど中身が未実装のやつ
+ApplicationFlags
+ChannelFlags
+CDNEndpoints
+Integration
+UserFlags
+SystemChannelFlags
+GuildMemberFlags
+
+ISO8601
+Snowflake
