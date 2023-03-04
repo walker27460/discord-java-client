@@ -2,7 +2,7 @@ package jp.kurages.discord.services;
 
 import java.text.MessageFormat;
 
-import jp.kurages.discord.oauth2.OAuth2Token;
+import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
@@ -11,8 +11,8 @@ import jp.kurages.requests.Requests;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class Base {
-	protected final OAuth2Token token;
+public abstract class Base {
+	protected final Token token;
 
 	protected String format(String text, Object... args){
 		return MessageFormat.format(text, args);

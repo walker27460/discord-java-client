@@ -1,4 +1,4 @@
-package jp.kurages.discord.oauth2;
+package jp.kurages.discord.client.oauth2;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @RequiredArgsConstructor
-public class OAuth2Token {
+public class OAuth2Token implements Token {
 	private final String accessToken;
 	private final String tokenType;
 	private final String expiresIn;

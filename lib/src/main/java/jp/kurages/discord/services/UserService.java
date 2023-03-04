@@ -1,9 +1,7 @@
 package jp.kurages.discord.services;
 
-import java.time.format.DateTimeFormatter;
-
 import jp.kurages.discord.Endpoints;
-import jp.kurages.discord.oauth2.OAuth2Token;
+import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.guild.Guild;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.discord.types.users.User;
@@ -16,8 +14,7 @@ public class UserService extends Base {
 	public static final String CURRENT_USER_GUILDS = Endpoints.BASE_API + "/users/@me/guilds";
 	public static final String CURRENT_USER_GUILD_MEMBER = Endpoints.BASE_API + "/users/@me/guilds/{0}/member";
 
-
-	public UserService(OAuth2Token token) {
+	public UserService(Token token) {
 		super(token);
 	}
 
