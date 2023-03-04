@@ -39,4 +39,13 @@ public enum OAuth2Scopes {
     WEBHOOK_INCOMING("webhook.incoming");
 
 	private String value;
+
+	public static OAuth2Scopes of(String value){
+		for (OAuth2Scopes scopes : OAuth2Scopes.values()) {
+			if(scopes.getValue().equals(value)){
+				return scopes;
+			}
+		}
+		throw new IllegalArgumentException("Can't find "+value+" in OAuth2Scopes");
+	}
 }
