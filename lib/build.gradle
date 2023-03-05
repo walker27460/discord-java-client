@@ -1,7 +1,22 @@
 plugins {
 	id 'java-library'
 	id 'eclipse'
+	id 'maven-publish'
 }
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}
+
+javadoc.options.encoding = 'UTF-8'
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 
 repositories {
 	mavenCentral()
@@ -19,4 +34,27 @@ dependencies {
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.26'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+}
+
+def versionNo = System.getenv('VERSION_NO') != null ? System.getenv('VERSION_NO') : '0'
+
+publishing{
+	repositories{
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/kurages/discord-java-client")
+			credentials {
+				username = System.getenv("GITHUB_ACTOR")
+				password = System.getenv("GITHUB_TOKEN")
+			}
+		}
+	}
+	publications{
+		gpr(MavenPublication){
+			groupId = 'jp.kurages'
+			artifactId = 'discord'
+			version = "0.0.${versionNo}"
+			from(components.java)
+		}
+	}
 }

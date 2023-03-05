@@ -1,5 +1,7 @@
 package jp.kurages.discord.types.users;
 
+import jp.kurages.discord.types.guild.Integration;
+
 /**
  * https://discord.com/developers/docs/resources/user#connection-object-connection-structure
  */
