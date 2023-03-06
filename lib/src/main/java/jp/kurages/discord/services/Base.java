@@ -2,17 +2,24 @@ package jp.kurages.discord.services;
 
 import java.text.MessageFormat;
 
+import jp.kurages.discord.client.Client;
 import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.requests.Request;
 import jp.kurages.requests.Requests;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public abstract class Base {
-	protected final Token token;
+	protected final Client client;
+	protected Token token;
+
+	public Base(Client client){
+		this.client = client;
+		this.token = client.getToken();
+	}
 
 	protected String format(String text, Object... args){
 		return MessageFormat.format(text, args);
@@ -29,7 +36,10 @@ public abstract class Base {
 		return response;
 	}
 
-	protected void checkScopes(OAuth2Scopes... scopes){
+	protected void isExecutable(OAuth2Scopes... scopes){
+		if(token.checkRefreshToken()){
+			token = client.refreshToken();
+		}
 		for (OAuth2Scopes scope : scopes) {
 			if(!token.checkScope(scope)){
 				throw new IllegalStateException("Unauthorized");

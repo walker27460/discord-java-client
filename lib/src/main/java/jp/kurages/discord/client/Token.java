@@ -4,10 +4,6 @@ import java.util.List;
 
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 
-/**
- * トークン保持用構造体。
- * リフレッシュもここでする(と思う)
- */
 public interface Token {
 	/**
 	 * Tokenタイプも含めたトークン文字列
@@ -25,4 +21,10 @@ public interface Token {
 	 * @return 使用可能ならtrue
 	 */
 	boolean checkScope(OAuth2Scopes scope);
+
+	/**
+	 * トークンのリフレッシュが必要かどうか
+	 * @return 必要ならばtrue
+	 */
+	boolean checkRefreshToken();
 }

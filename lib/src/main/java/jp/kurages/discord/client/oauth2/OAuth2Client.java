@@ -2,6 +2,7 @@ package jp.kurages.discord.client.oauth2;
 
 import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
+import jp.kurages.discord.client.Token;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.requests.Request;
@@ -19,6 +20,8 @@ public class OAuth2Client implements Client {
 	private final String redirectUri;
 	private final String code;
 
+	private Token token;
+
 	private Requests getRequests(){
 		return new Requests(Request.builder()
 			.url(Endpoints.TOKEN_URL)
@@ -32,12 +35,16 @@ public class OAuth2Client implements Client {
 			.build());
 	}
 
-	public OAuth2Token getToken() {
+
+	public void exchangeCode() {
 		Requests requests = getRequests();
 		String response = requests.send();
-		System.out.println("requests: "+requests);
-		System.out.println("response: "+response);
-		return JsonUtil.fromJson(response, OAuth2Token.class);
+		token = JsonUtil.fromJson(response, OAuth2Token.class);
 	}
 
+
+	@Override
+	public Token refreshToken() {
+		throw new UnsupportedOperationException("Unimplemented method 'refreshToken'");
+	}
 }
