@@ -12,11 +12,11 @@ import jp.kurages.requests.Requests;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public abstract class Base {
-	protected final Client<? extends Token> client;
+public abstract class Service {
+	protected final Client client;
 	protected Token token;
 
-	public Base(Client<? extends Token> client){
+	public Service(Client client){
 		this.client = client;
 		this.token = client.getToken();
 	}

@@ -53,6 +53,7 @@ public class OAuth2Token implements Token {
 		if(StringUtils.isBlank(this.scope)){
 			return false;
 		}
+		// TODO 上位権限保持時の下位権限判定を考える
 		return this.scope.contains(scope.getValue());
 	}
 

@@ -2,20 +2,19 @@ package jp.kurages.discord.services;
 
 import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
-import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.guild.Guild;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.discord.types.users.User;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.discord.utils.JsonUtil;
 
-public class UserService extends Base {
+public class UserService extends Service {
 	/** ログイン中のユーザ取得 {@value} */
 	public static final String CURRENT_USER = Endpoints.BASE_API + "/users/@me";
 	public static final String CURRENT_USER_GUILDS = Endpoints.BASE_API + "/users/@me/guilds";
 	public static final String CURRENT_USER_GUILD_MEMBER = Endpoints.BASE_API + "/users/@me/guilds/{0}/member";
 
-	public UserService(Client<? extends Token> client) {
+	public UserService(Client client) {
 		super(client);
 	}
 

@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
-import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
@@ -19,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class OAuth2Client implements Client<OAuth2Token> {
+public class OAuth2Client implements Client {
 	private final String clientId;
 	private final String clientSecret;
 	private final String grantType;

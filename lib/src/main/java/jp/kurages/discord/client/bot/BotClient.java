@@ -12,19 +12,15 @@ import jp.kurages.discord.types.permissions.BitwisePermission;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class BotClient implements Client<BotToken> {
+public class BotClient implements Client {
 	private final String clientId;
-	private final List<OAuth2Scopes> scopes;
-	private final List<BitwisePermission> permissions;
-
-	private BotToken token;
-
+	private final String token;
 
 	/**
 	 * Bot追加用URL
 	 * @return URL
 	 */
-	public String getURL(){
+	public String getURL(List<OAuth2Scopes> scopes, List<BitwisePermission> permissions){
 		return new StringBuilder()
 			.append(Endpoints.AUTHORIZATION)
 			.append("?client_id=").append(clientId)
@@ -39,8 +35,8 @@ public class BotClient implements Client<BotToken> {
 	 * @param disableGuildSelect 指定のギルドidを強制する
 	 * @return URL
 	 */
-	public String getURL(String guildId, boolean disableGuildSelect){
-		return new StringBuilder(getURL())
+	public String getURL(List<OAuth2Scopes> scopes, List<BitwisePermission> permissions, String guildId, boolean disableGuildSelect){
+		return new StringBuilder(getURL(scopes, permissions))
 			.append("&guild_id=").append(guildId)
 			.append("&disable_guild_select=").append(disableGuildSelect)
 			.toString();
@@ -52,7 +48,7 @@ public class BotClient implements Client<BotToken> {
 
 	@Override
 	public Token getToken() {
-		return token;
+		return new BotToken(token);
 	}
 
 }

@@ -11,12 +11,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BotToken implements Token {
 	private final String token;
-	private final List<OAuth2Scopes> scopes;
+
+	@Override
+	public String getToken() {
+		return "Bot " + token;
+	}
+
+	@Override
+	public List<OAuth2Scopes> getScopes() {
+		throw new UnsupportedOperationException("Unimplemented method 'getScopes'");
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean checkScope(OAuth2Scopes scope) {
-		return scopes.contains(scope);
+		return true;
 	}
 
 	/** {@inheritDoc} */
@@ -24,5 +33,4 @@ public class BotToken implements Token {
 	public boolean checkRefreshToken() {
 		return false;
 	}
-
 }
