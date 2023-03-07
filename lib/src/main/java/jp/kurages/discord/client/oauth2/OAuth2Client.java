@@ -1,8 +1,14 @@
 package jp.kurages.discord.client.oauth2;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
 import jp.kurages.discord.client.Token;
+import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.requests.Request;
@@ -13,14 +19,32 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class OAuth2Client implements Client {
+public class OAuth2Client implements Client<OAuth2Token> {
 	private final String clientId;
 	private final String clientSecret;
 	private final String grantType;
 	private final String redirectUri;
+	private final List<OAuth2Scopes> scopes;
 	private final String code;
 
-	private Token token;
+	private OAuth2Token token;
+
+	/**
+	 * OAuth2認証用URL生成
+	 * @return URL
+	 */
+	public String getURL(){
+		List<String> scopes = this.scopes.stream()
+			.map(OAuth2Scopes::getValue)
+			.collect(Collectors.toList());
+		return new StringBuilder()
+			.append(Endpoints.AUTHORIZATION)
+			.append("?client_id=").append(clientId)
+			.append("&redirect_uri=").append(redirectUri)
+			.append("&response_type=").append(grantType)
+			.append("&scope=").append(StringUtils.join(scopes, "%20"))
+			.toString();
+	}
 
 	private Requests getRequests(){
 		return new Requests(Request.builder()
@@ -44,7 +68,8 @@ public class OAuth2Client implements Client {
 
 
 	@Override
-	public Token refreshToken() {
+	public OAuth2Token refreshToken() {
+		// this.token = token;
 		throw new UnsupportedOperationException("Unimplemented method 'refreshToken'");
 	}
 }

@@ -2,6 +2,7 @@ package jp.kurages.discord.services;
 
 import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
+import jp.kurages.discord.client.Token;
 import jp.kurages.discord.types.guild.Guild;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.discord.types.users.User;
@@ -14,7 +15,7 @@ public class UserService extends Base {
 	public static final String CURRENT_USER_GUILDS = Endpoints.BASE_API + "/users/@me/guilds";
 	public static final String CURRENT_USER_GUILD_MEMBER = Endpoints.BASE_API + "/users/@me/guilds/{0}/member";
 
-	public UserService(Client client) {
+	public UserService(Client<? extends Token> client) {
 		super(client);
 	}
 

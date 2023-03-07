@@ -13,10 +13,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public abstract class Base {
-	protected final Client client;
+	protected final Client<? extends Token> client;
 	protected Token token;
 
-	public Base(Client client){
+	public Base(Client<? extends Token> client){
 		this.client = client;
 		this.token = client.getToken();
 	}

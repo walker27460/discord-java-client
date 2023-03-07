@@ -3,7 +3,7 @@ package jp.kurages.discord;
 public class Endpoints {
 	public static final String BASE_API = "https://discord.com/api/v10";
 	/** 認証URL {@value} */
-	public static final String BASE_AUTHORIZATION = "https://discord.com/oauth2/authorize";
+	public static final String AUTHORIZATION = "https://discord.com/oauth2/authorize";
 
 	/** CDN URL {@value} */
 	public static final String CDN_URL = "https://cdn.discordapp.com";
