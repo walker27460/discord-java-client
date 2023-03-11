@@ -1,6 +1,8 @@
 package jp.kurages.discord.services;
 
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
 
 import jp.kurages.discord.client.Client;
 import jp.kurages.discord.client.Token;
@@ -25,16 +27,46 @@ public abstract class Service {
 		return MessageFormat.format(text, args);
 	}
 
-	protected String getRequest(String url, HttpMethod method){
-		String response = new Requests(Request.builder()
-			.headers("Content-Type", ContentType.APPLIACTION_JSON.getValue())
-			.headers("Authorization", token.getToken())
-			.url(url)
+	private Request.RequestBuilder requestBuilder(String url, HttpMethod method){
+		ContentType contentType;
+		switch(method){
+			case DELETE:
+			case GET:
+				contentType = ContentType.FORM_URLENCODED;
+				break;
+			default:
+				contentType = ContentType.APPLIACTION_JSON;
+				break;
+		}
+		return Request.builder()
+			.baseUrl(url)
 			.method(method)
-			.build()
-		).send();
-		return response;
+			.headers("Content-Type", contentType.getValue())
+			.headers("Authorization", token.getToken());
 	}
+
+	protected String sendRequest(String url, HttpMethod method) throws ServiceException {
+		try {
+			String response = new Requests(requestBuilder(url, method).build()).send();
+			return response;
+		} catch (IOException | InterruptedException e) {
+			throw new ServiceException(e);
+		}
+	}
+
+	protected String sendRequest(String url, HttpMethod method, Map<String, String> data) throws ServiceException{
+		var req = requestBuilder(url, method);
+		for (Map.Entry<String, String> e: data.entrySet()) {
+			req.data(e.getKey(), e.getValue());
+		}
+		try {
+			String response = new Requests(req.build()).send();
+			return response;
+		} catch (IOException | InterruptedException e) {
+			throw new ServiceException(e);
+		}
+	}
+
 
 	protected void isExecutable(OAuth2Scopes... scopes){
 		if(token.checkRefreshToken()){

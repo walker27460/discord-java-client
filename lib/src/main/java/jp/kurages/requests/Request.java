@@ -5,63 +5,76 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import jp.kurages.requests.HttpMethod.EncodeMode;
+import org.apache.commons.lang3.StringUtils;
+
 import jp.kurages.requests.utils.JsonUtil;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Singular;
-import lombok.ToString;
 
 @Getter
+@Setter
 @Builder
-@ToString
 public class Request {
 	private static final String EQUAL = "=";
 	private static final String AMPERSAND = "&";
 	private static final String QUESTION_MARK = "?";
 	public static final String CONTENT_TYPE = "Content-Type";
+	public static final String USER_AGENT = "user-agent";
 
-	private final String url;
-	@Builder.Default
-	private final String accept = ContentType.APPLIACTION_JSON.getValue();
+	private final String baseUrl;
 	private final HttpMethod method;
 
 	@Singular("headers")
 	private final Map<String, String> headers;
 
-	@Singular("params")
-	private final Map<String, String> params;
-
 	@Singular("data")
 	private final Map<String, String> data;
 
 	public String getUrl(){
-		if(method.getMode() == EncodeMode.PARAM){
-			return url + QUESTION_MARK + encode();
+		switch(method){
+			case GET:
+			case DELETE:
+				if(data.size() > 0){
+					return baseUrl + QUESTION_MARK + urlEncode();
+				}else{
+					return baseUrl;
+				}
+			default:
+				return baseUrl;
 		}
-		return url;
 	}
 
-	private String encode(){
-		Map<String, String> value = method.getMode() == EncodeMode.PARAM ? params : data;
-		if(method.getMode() == EncodeMode.PARAM
-			|| ContentType.FORM_URLENCODED.equals(getContentType())
-		){
-			return value.entrySet().stream()
-				.map(e -> e.getKey() + EQUAL + URLEncoder.encode(
-					e.getValue(), StandardCharsets.UTF_8
-				)
-			).collect(Collectors.joining(AMPERSAND));
-		} else if(method.getMode() == EncodeMode.DATA){
-			return JsonUtil.toJson(value);
+	public String urlEncode(){
+		if(data.size() == 0){
+			return StringUtils.EMPTY;
 		}
-		throw new IllegalArgumentException("not support EncodeMode");
+		StringBuilder params = new StringBuilder();
+		for (Map.Entry<String, String> param : data.entrySet()) {
+			params.append(AMPERSAND)
+			.append(URLEncoder.encode(
+				param.getKey(),
+				StandardCharsets.UTF_8
+			))
+			.append(EQUAL)
+			.append(URLEncoder.encode(
+				param.getValue(),
+				StandardCharsets.UTF_8
+			));
+		}
+		return params.substring(1).toString();
 	}
 
-	public BodyPublisher getBodyPublisher(){
-		return BodyPublishers.ofString(encode());
+	public BodyPublisher getBody(){
+		switch(method){
+			case DELETE:
+			case GET:
+				return BodyPublishers.noBody();
+			default:
+				return BodyPublishers.ofString(JsonUtil.toJson(data));
+		}
 	}
 
 	private String getContentType(){

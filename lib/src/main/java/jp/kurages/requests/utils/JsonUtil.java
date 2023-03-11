@@ -13,7 +13,6 @@ public class JsonUtil {
 		.create();
 
 	public static <T> T fromJson(String json, Class<T> classofT){
-		System.out.println("fromJson("+json+");");
 		return gson.fromJson(json, classofT);
 	}
 

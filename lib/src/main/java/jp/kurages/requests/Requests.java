@@ -1,14 +1,19 @@
 package jp.kurages.requests;
 
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Requests {
-	private HttpClient client = HttpClient.newHttpClient();
-	private HttpRequest request;
+	private final HttpClient client = HttpClient.newHttpClient();
+	private final HttpRequest request;
 
 	public Requests(Request request){
 		HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(
@@ -18,18 +23,15 @@ public class Requests {
 			requestBuilder.header(header.getKey(), header.getValue());
 		}
 		this.request = requestBuilder
-			.method(request.getMethod().getMethod(), request.getBodyPublisher())
+			.method(request.getMethod().toString(), request.getBody())
 			.build();
+		log.debug(request.getUrl());
 	}
 
-	public String send() {
-		try {
-			return client.send(
-				this.request,
-				HttpResponse.BodyHandlers.ofString()
-			).body();
-		} catch (Exception e) {
-			return null;
-		}
+	public String send() throws IOException, InterruptedException {
+		return client.send(
+			this.request,
+			HttpResponse.BodyHandlers.ofString()
+		).body();
 	}
 }

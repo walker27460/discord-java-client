@@ -1,10 +1,5 @@
 package jp.kurages.discord.types.permissions;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -55,19 +50,18 @@ public enum BitwisePermission {
 
 	private int value;
 
-	public static int calculationScope(Set<BitwisePermission> scopes){
+	public boolean checkScope(Iterable<BitwisePermission> scopes){
+		if(this == ADMINISTRATOR){
+			return true;
+		}
+		return (calculationScope(scopes) & this.getValue()) == this.getValue();
+	}
+
+	public static int calculationScope(Iterable<BitwisePermission> scopes){
 		int result = 0;
 		for (BitwisePermission scope : scopes) {
 			result = result | scope.getValue();
 		}
 		return result;
-	}
-
-	public static int calculationScope(List<BitwisePermission> scopes){
-		return calculationScope(new HashSet<>(scopes));
-	}
-
-	public static int calculationScope(BitwisePermission[] scopes){
-		return calculationScope(Arrays.asList(scopes));
 	}
 }

@@ -1,22 +1,36 @@
 package jp.kurages.requests;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum HttpMethod {
-	GET("GET", EncodeMode.PARAM),
-	POST("POST", EncodeMode.DATA),
-	PUT("GET", EncodeMode.DATA),
-	DELETE("GET", EncodeMode.PARAM),
-	PATCH("PATCH", EncodeMode.DATA);
+    GET {
+		@Override
+		public String toString() {
+			return "GET";
+		}
+	},
+    POST {
+		@Override
+		public String toString() {
+			return "POST";
+		}
+	},
+    PUT {
+		@Override
+		public String toString() {
+			return "PUT";
+		}
+	},
+    PATCH {
+		@Override
+		public String toString() {
+			return "PATCH";
+		}
+	},
+    DELETE {
+		@Override
+		public String toString() {
+			return "DELETE";
+		}
+	};
 
-	private String method;
-	private EncodeMode mode;
-
-	protected static enum EncodeMode {
-		PARAM,
-		DATA;
-	}
+	public abstract String toString();
 }
