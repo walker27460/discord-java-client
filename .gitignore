@@ -13,6 +13,6 @@ build/
 .settings/
 
 .gradle/
-
-
+.env
+.envrc
 
