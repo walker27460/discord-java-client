@@ -10,7 +10,6 @@ import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.requests.Request;
-import jp.kurages.requests.Request.RequestBuilder;
 import jp.kurages.requests.Requests;
 import lombok.AllArgsConstructor;
 
@@ -28,7 +27,7 @@ public abstract class Service {
 		return MessageFormat.format(text, args);
 	}
 
-	private RequestBuilder requestBuilder(String url, HttpMethod method){
+	private ContentType getContentType(HttpMethod method){
 		ContentType contentType;
 		switch(method){
 			case DELETE:
@@ -39,16 +38,17 @@ public abstract class Service {
 				contentType = ContentType.APPLIACTION_JSON;
 				break;
 		}
-		return Request.builder()
-			.baseUrl(url)
-			.method(method)
-			.headers("Content-Type", contentType.getValue())
-			.headers("Authorization", token.getToken());
+		return contentType;
 	}
 
 	protected String sendRequest(String url, HttpMethod method) throws ServiceException {
 		try {
-			String response = new Requests(requestBuilder(url, method).build()).send();
+			String response = new Requests(Request.builder()
+				.baseUrl(url)
+				.method(method)
+				.headers("Content-Type", getContentType(method).getValue())
+				.headers("Authorization", token.getToken())
+			.build()).send();
 			return response;
 		} catch (IOException | InterruptedException e) {
 			throw new ServiceException(e);
@@ -56,7 +56,11 @@ public abstract class Service {
 	}
 
 	protected String sendRequest(String url, HttpMethod method, RequestParam data) throws ServiceException{
-		var req = requestBuilder(url, method);
+		var req = Request.builder()
+			.baseUrl(url)
+			.method(method)
+			.headers("Content-Type", getContentType(method).getValue())
+			.headers("Authorization", token.getToken());
 		for (Map.Entry<String, String> e: data.getParams().entrySet()) {
 			req.data(e.getKey(), e.getValue());
 		}
