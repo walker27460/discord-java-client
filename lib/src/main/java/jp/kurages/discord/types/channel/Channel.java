@@ -4,7 +4,13 @@ import java.util.Date;
 
 import jp.kurages.discord.types.Snowflake;
 import jp.kurages.discord.types.users.User;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class Channel {
 	Snowflake id;
 	ChannelTypes type;

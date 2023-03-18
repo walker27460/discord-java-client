@@ -1,5 +1,9 @@
 package jp.kurages.discord.types.oauth2;
 
+import java.util.Collection;
+
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -47,5 +51,10 @@ public enum OAuth2Scopes {
 			}
 		}
 		throw new IllegalArgumentException("Can't find "+value+" in OAuth2Scopes");
+	}
+
+	public static String getURLScopes(Collection<OAuth2Scopes> scopes){
+		String[] stringScopes = scopes.stream().map(OAuth2Scopes::getValue).toArray(String[]::new);
+		return StringUtils.join(stringScopes, "%20");
 	}
 }

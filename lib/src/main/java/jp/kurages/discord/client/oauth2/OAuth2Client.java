@@ -47,7 +47,7 @@ public class OAuth2Client implements Client {
 
 	private Requests getRequests(){
 		return new Requests(Request.builder()
-			.url(Endpoints.TOKEN_URL)
+			.baseUrl(Endpoints.TOKEN_URL)
 			.method(HttpMethod.POST)
 			.headers("Content-Type", ContentType.FORM_URLENCODED.getValue())
 			.data("client_id", this.clientId)
@@ -60,9 +60,14 @@ public class OAuth2Client implements Client {
 
 
 	public void exchangeCode() {
-		Requests requests = getRequests();
-		String response = requests.send();
-		token = JsonUtil.fromJson(response, OAuth2Token.class);
+		try {
+			Requests requests = getRequests();
+			String response = requests.send();
+			token = JsonUtil.fromJson(response, OAuth2Token.class);
+		}catch(Exception e){
+			// TODO これは仮
+			throw new RuntimeException();
+		}
 	}
 
 

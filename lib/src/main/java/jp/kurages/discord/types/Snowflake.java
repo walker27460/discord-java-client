@@ -20,6 +20,10 @@ public class Snowflake {
 
 	private final long value;
 
+	public String getStringValue(){
+		return Long.toString(value);
+	}
+
 	/**
 	 * 2015/1/1からの秒数
 	 */

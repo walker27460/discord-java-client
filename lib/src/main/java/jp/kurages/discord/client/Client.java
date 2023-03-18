@@ -1,5 +1,6 @@
 package jp.kurages.discord.client;
 
+import jp.kurages.discord.services.GuildService;
 import jp.kurages.discord.services.UserService;
 
 public interface Client {
@@ -28,5 +29,12 @@ public interface Client {
 	 */
 	default UserService getUserService(){
 		return new UserService(this);
+	}
+
+	/**
+	 * @return ギルドサービス
+	 */
+	default GuildService getGuildService(){
+		return new GuildService(this);
 	}
 }

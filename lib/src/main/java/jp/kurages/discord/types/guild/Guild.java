@@ -1,6 +1,7 @@
 package jp.kurages.discord.types.guild;
 
 import jp.kurages.discord.types.Snowflake;
+import jp.kurages.discord.types.permissions.Role;
 import jp.kurages.discord.types.sticker.Sticker;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class Guild {
 	Integer verificationLevel;
 	Integer defaultMessageNotifications;
 	Integer explicitContentFilter;
-	Snowflake[] roles;
+	Role[] roles;
 	GuildFeatures[] features;
 	Integer mfaLevel;
 	Snowflake applicationId;

@@ -54,9 +54,9 @@ public abstract class Service {
 		}
 	}
 
-	protected String sendRequest(String url, HttpMethod method, Map<String, String> data) throws ServiceException{
+	protected String sendRequest(String url, HttpMethod method, RequestParam data) throws ServiceException{
 		var req = requestBuilder(url, method);
-		for (Map.Entry<String, String> e: data.entrySet()) {
+		for (Map.Entry<String, String> e: data.getParams().entrySet()) {
 			req.data(e.getKey(), e.getValue());
 		}
 		try {

@@ -3,7 +3,13 @@ package jp.kurages.discord.types.guild;
 import jp.kurages.discord.types.Snowflake;
 import jp.kurages.discord.types.emoji.Emoji;
 import jp.kurages.discord.types.sticker.Sticker;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class GuildPreview {
 	Snowflake id;
 	String name;

@@ -1,6 +1,9 @@
 package jp.kurages.discord.client.bot;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,13 +23,16 @@ public class BotClient implements Client {
 	 * Bot追加用URL
 	 * @return URL
 	 */
-	public String getURL(List<OAuth2Scopes> scopes, List<BitwisePermission> permissions){
-		return new StringBuilder()
-			.append(Endpoints.AUTHORIZATION)
-			.append("?client_id=").append(clientId)
-			.append("&scope=").append(StringUtils.join(scopes, "%20"))
-			.append("&permissions=").append(BitwisePermission.calculationScope(permissions))
-			.toString();
+	public String getURL(Collection<OAuth2Scopes> scopes, Collection<BitwisePermission> permissions){
+		StringBuilder sb = new StringBuilder(Endpoints.AUTHORIZATION)
+			.append("?client_id=").append(clientId);
+		if(!scopes.isEmpty()){
+			sb.append("&scope=").append(OAuth2Scopes.getURLScopes(scopes));
+		}
+		if(!permissions.isEmpty()){
+			sb.append("&permissions=").append(BitwisePermission.calculationScope(permissions));
+		}
+		return sb.toString();
 	}
 
 	/**
