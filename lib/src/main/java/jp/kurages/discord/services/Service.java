@@ -10,6 +10,7 @@ import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
 import jp.kurages.requests.Request;
+import jp.kurages.requests.Request.RequestBuilder;
 import jp.kurages.requests.Requests;
 import lombok.AllArgsConstructor;
 
@@ -27,7 +28,7 @@ public abstract class Service {
 		return MessageFormat.format(text, args);
 	}
 
-	private Request.RequestBuilder requestBuilder(String url, HttpMethod method){
+	private RequestBuilder requestBuilder(String url, HttpMethod method){
 		ContentType contentType;
 		switch(method){
 			case DELETE:
