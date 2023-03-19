@@ -73,11 +73,15 @@ public class Request {
 			case GET:
 				return BodyPublishers.noBody();
 			default:
-				return BodyPublishers.ofString(JsonUtil.toJson(data));
+				if(getContentType() == ContentType.FORM_URLENCODED){
+					return BodyPublishers.ofString(urlEncode());
+				} else {
+					return BodyPublishers.ofString(JsonUtil.toJson(data));
+				}
 		}
 	}
 
-	private String getContentType(){
-		return headers.get(CONTENT_TYPE);
+	private ContentType getContentType(){
+		return ContentType.of(headers.get(CONTENT_TYPE));
 	}
 }
