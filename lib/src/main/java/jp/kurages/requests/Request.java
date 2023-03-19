@@ -5,6 +5,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,10 +14,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @Builder
+@Slf4j
 public class Request {
 	private static final String EQUAL = "=";
 	private static final String AMPERSAND = "&";
@@ -51,20 +54,16 @@ public class Request {
 		if(data.size() == 0){
 			return StringUtils.EMPTY;
 		}
-		StringBuilder params = new StringBuilder();
-		for (Map.Entry<String, String> param : data.entrySet()) {
-			params.append(AMPERSAND)
-			.append(URLEncoder.encode(
-				param.getKey(),
-				StandardCharsets.UTF_8
-			))
-			.append(EQUAL)
-			.append(URLEncoder.encode(
-				param.getValue(),
-				StandardCharsets.UTF_8
-			));
-		}
-		return params.substring(1).toString();
+		String params = data.entrySet().stream()
+			.map(e -> new StringBuilder()
+				.append(e.getKey())
+				.append(EQUAL)
+				.append(URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+				.toString()
+			).collect(Collectors.joining(AMPERSAND));
+		log.debug("setBody: {}", data);
+		log.debug("urlEncode: {}", params);
+		return params;
 	}
 
 	public BodyPublisher getBody(){
@@ -73,7 +72,7 @@ public class Request {
 			case GET:
 				return BodyPublishers.noBody();
 			default:
-				if(getContentType() == ContentType.FORM_URLENCODED){
+				if(getContentType() == ContentType.FORM_URLENCODED.getValue()){
 					return BodyPublishers.ofString(urlEncode());
 				} else {
 					return BodyPublishers.ofString(JsonUtil.toJson(data));
@@ -81,7 +80,7 @@ public class Request {
 		}
 	}
 
-	private ContentType getContentType(){
-		return ContentType.of(headers.get(CONTENT_TYPE));
+	private String getContentType(){
+		return headers.get(CONTENT_TYPE);
 	}
 }

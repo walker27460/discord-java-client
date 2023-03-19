@@ -23,9 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @RequiredArgsConstructor
 public class OAuth2Client implements Client {
+	private final static String GRANT_TYPE = "authorization_code";
+	private final static String RESPONSE_TYPE = "code";
+
+
 	private final String clientId;
 	private final String clientSecret;
-	private final String grantType;
 	private final String redirectUri;
 	private final List<OAuth2Scopes> scopes;
 	private final String code;
@@ -44,7 +47,7 @@ public class OAuth2Client implements Client {
 			.append(Endpoints.AUTHORIZATION)
 			.append("?client_id=").append(clientId)
 			.append("&redirect_uri=").append(redirectUri)
-			.append("&response_type=").append(grantType)
+			.append("&response_type=").append(RESPONSE_TYPE)
 			.append("&scope=").append(StringUtils.join(scopes, "%20"))
 			.toString();
 	}
@@ -53,10 +56,10 @@ public class OAuth2Client implements Client {
 		return new Requests(Request.builder()
 			.baseUrl(Endpoints.TOKEN_URL)
 			.method(HttpMethod.POST)
-			.headers("Content-Type", ContentType.FORM_URLENCODED.getValue())
+			.headers(Request.CONTENT_TYPE, ContentType.FORM_URLENCODED.getValue())
 			.data("client_id", this.clientId)
 			.data("client_secret", this.clientSecret)
-			.data("grant_type", this.grantType)
+			.data("grant_type", GRANT_TYPE)
 			.data("redirect_uri", this.redirectUri)
 			.data("code", this.code)
 			.build());
@@ -66,6 +69,7 @@ public class OAuth2Client implements Client {
 	public void exchangeCode() {
 		try {
 			Requests requests = getRequests();
+			log.debug("requests {}", requests);
 			String response = requests.send();
 			token = JsonUtil.fromJson(response, OAuth2Token.class);
 		}catch(Exception e){
