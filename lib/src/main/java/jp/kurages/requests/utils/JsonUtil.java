@@ -6,6 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class JsonUtil {
 	private static final Gson gson = new GsonBuilder()
 		.serializeNulls()
@@ -13,6 +16,7 @@ public class JsonUtil {
 		.create();
 
 	public static <T> T fromJson(String json, Class<T> classofT){
+		log.debug("fromJson({})", json);
 		return gson.fromJson(json, classofT);
 	}
 

@@ -15,8 +15,12 @@ import jp.kurages.requests.Requests;
 import jp.kurages.requests.utils.JsonUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Slf4j
+@ToString
 @RequiredArgsConstructor
 public class OAuth2Client implements Client {
 	private final String clientId;
