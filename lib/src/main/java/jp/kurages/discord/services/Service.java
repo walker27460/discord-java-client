@@ -74,13 +74,13 @@ public abstract class Service {
 
 
 	protected void isExecutable(OAuth2Scopes... scopes){
-		if(token.checkRefreshToken()){
-			token = client.refreshToken();
-		}
-		for (OAuth2Scopes scope : scopes) {
-			if(!token.checkScope(scope)){
-				throw new IllegalStateException("Unauthorized");
-			}
-		}
+		// if(token.checkRefreshToken()){
+		// 	token = client.refreshToken();
+		// }
+		// for (OAuth2Scopes scope : scopes) {
+		// 	if(!token.checkScope(scope)){
+		// 		throw new IllegalStateException("Unauthorized");
+		// 	}
+		// }
 	}
 }
