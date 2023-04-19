@@ -1,11 +1,23 @@
 package jp.kurages.discord.services;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
+import com.google.gson.JsonObject;
+import jp.kurages.discord.Endpoints;
 import jp.kurages.discord.client.Client;
-import jp.kurages.discord.client.Token;
+import jp.kurages.discord.types.IdResolvable;
+import jp.kurages.discord.types.Snowflake;
 import jp.kurages.discord.types.oauth2.OAuth2Scopes;
 import jp.kurages.requests.ContentType;
 import jp.kurages.requests.HttpMethod;
@@ -13,74 +25,41 @@ import jp.kurages.requests.Request;
 import jp.kurages.requests.Requests;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public abstract class Service {
-	protected final Client client;
-	protected Token token;
+import javax.annotation.Nullable;
 
+@AllArgsConstructor
+public abstract class Service<T extends IdResolvable> {
+	protected final Client client;
+	protected ConcurrentHashMap<Snowflake, T> cache;
 	public Service(Client client){
 		this.client = client;
-		this.token = client.getToken();
 	}
-
+	private void set(T value) {
+		this.cache.put(value.id, value);
+	}
 	protected String format(String text, Object... args){
 		return MessageFormat.format(text, args);
 	}
-
-	private ContentType getContentType(HttpMethod method){
-		ContentType contentType;
-		switch(method){
-			case DELETE:
-			case GET:
-				contentType = ContentType.FORM_URLENCODED;
-				break;
-			default:
-				contentType = ContentType.APPLIACTION_JSON;
-				break;
-		}
-		return contentType;
+	@Nullable
+	public T get(Snowflake id) {
+		return this.cache.get(id);
 	}
+	abstract String endpoint(String id);
+	abstract Class<T> holds();
 
-	protected String sendRequest(String url, HttpMethod method) throws ServiceException {
-		try {
-			String response = new Requests(Request.builder()
-				.baseUrl(url)
-				.method(method)
-				.headers("Content-Type", getContentType(method).getValue())
-				.headers("Authorization", token.getToken())
-			.build()).send();
-			return response;
-		} catch (IOException | InterruptedException e) {
-			throw new ServiceException(e);
+	abstract HttpRequest fetchRequest() throws URISyntaxException;
+
+	public T fetch(String ids) throws DiscordAPIException, IOException, InterruptedException, URISyntaxException {
+		HttpResponse<String> res = this.client.http.send(this.fetchRequest(), HttpResponse.BodyHandlers.ofString());
+		if(res.statusCode() > 400) {
+			JsonObject error = this.client.gson.fromJson(res.body(), JsonObject.class);
+			throw new DiscordAPIException(error.get("message").getAsString());
 		}
+		T value = this.client.gson.fromJson(res.body(), this.holds());
+		this.set(value);
+		return value;
 	}
-
-	protected String sendRequest(String url, HttpMethod method, RequestParam data) throws ServiceException{
-		var req = Request.builder()
-			.baseUrl(url)
-			.method(method)
-			.headers("Content-Type", getContentType(method).getValue())
-			.headers("Authorization", token.getToken());
-		for (Map.Entry<String, String> e: data.getParams().entrySet()) {
-			req.data(e.getKey(), e.getValue());
-		}
-		try {
-			String response = new Requests(req.build()).send();
-			return response;
-		} catch (IOException | InterruptedException e) {
-			throw new ServiceException(e);
-		}
-	}
-
-
-	protected void isExecutable(OAuth2Scopes... scopes){
-		// if(token.checkRefreshToken()){
-		// 	token = client.refreshToken();
-		// }
-		// for (OAuth2Scopes scope : scopes) {
-		// 	if(!token.checkScope(scope)){
-		// 		throw new IllegalStateException("Unauthorized");
-		// 	}
-		// }
+	ConcurrentHashMap<Snowflake, T> valueOf() {
+		return this.cache;
 	}
 }
